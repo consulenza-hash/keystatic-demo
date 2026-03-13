@@ -1,0 +1,53 @@
+---
+import { createReader } from '@keystatic/core/reader';
+import keystaticConfig from '../../keystatic.config';
+
+const reader = createReader(process.cwd(), keystaticConfig);
+const homepage = await reader.singletons.homepage.read();
+const articoli = await reader.collections.articoli.all();
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Keystatic</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #fafaf8; color: #1a1a1a; }
+    .hero { background: #1a1a1a; color: #fff; padding: 80px 24px; text-align: center; }
+    .hero h1 { font-size: clamp(28px, 5vw, 52px); margin-bottom: 16px; }
+    .hero p { font-size: 18px; color: #aaa; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .hero a { display: inline-block; background: #5C7E60; color: #fff; padding: 14px 32px; text-decoration: none; border-radius: 4px; font-weight: 600; }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px; }
+    .section-title { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 32px; }
+    .articoli-grid { display: grid; gap: 16px; }
+    .articolo-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 24px; text-decoration: none; color: inherit; transition: border-color .2s; }
+    .articolo-card:hover { border-color: #5C7E60; }
+    .articolo-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .articolo-card p { color: #666; font-size: 14px; line-height: 1.6; }
+    .articolo-card .data { font-size: 12px; color: #aaa; margin-top: 12px; }
+    .admin-link { position: fixed; bottom: 24px; right: 24px; background: #1a1a1a; color: #fff; padding: 10px 18px; border-radius: 100px; text-decoration: none; font-size: 13px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2); }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1>{homepage?.titolo ?? 'Benvenuto'}</h1>
+    <p>{homepage?.sottotitolo}</p>
+    <a href={homepage?.cta_link ?? '/'}>{homepage?.cta_testo ?? 'Scopri di più'}</a>
+  </section>
+  <div class="container">
+    <p class="section-title">Articoli recenti</p>
+    <div class="articoli-grid">
+      {articoli.map(a => (
+        <a href={`/articoli/${a.slug}`} class="articolo-card">
+          <h2>{a.entry.titolo}</h2>
+          <p>{a.entry.descrizione}</p>
+          <p class="data">{a.entry.data}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+  <a href="/keystatic" class="admin-link">⚙ Admin</a>
+</body>
+</html>

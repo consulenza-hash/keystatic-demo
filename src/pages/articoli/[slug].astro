@@ -1,0 +1,53 @@
+---
+import { createReader } from '@keystatic/core/reader';
+import keystaticConfig from '../../../keystatic.config';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const reader = createReader(process.cwd(), keystaticConfig);
+  const slugs = await reader.collections.articoli.list();
+  return slugs.map(slug => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const reader = createReader(process.cwd(), keystaticConfig);
+const articolo = await reader.collections.articoli.read(slug);
+const { default: Contenuto } = await articolo!.contenuto();
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{articolo?.titolo}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #fafaf8; color: #1a1a1a; }
+    .header { background: #1a1a1a; padding: 20px 24px; }
+    .header a { color: #aaa; text-decoration: none; font-size: 14px; }
+    .container { max-width: 720px; margin: 0 auto; padding: 60px 24px; }
+    h1 { font-size: clamp(26px, 4vw, 44px); margin-bottom: 16px; line-height: 1.2; }
+    .data { font-size: 13px; color: #aaa; margin-bottom: 48px; }
+    .content { line-height: 1.8; font-size: 17px; color: #333; }
+    .content h2 { font-size: 24px; margin: 40px 0 16px; color: #1a1a1a; }
+    .content p { margin-bottom: 20px; }
+    .content ol, .content ul { padding-left: 24px; margin-bottom: 20px; }
+    .content li { margin-bottom: 8px; }
+    .admin-link { position: fixed; bottom: 24px; right: 24px; background: #1a1a1a; color: #fff; padding: 10px 18px; border-radius: 100px; text-decoration: none; font-size: 13px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="/">← Torna alla home</a>
+  </div>
+  <div class="container">
+    <h1>{articolo?.titolo}</h1>
+    <p class="data">{articolo?.data}</p>
+    <div class="content">
+      <Contenuto />
+    </div>
+  </div>
+  <a href="/keystatic" class="admin-link">⚙ Admin</a>
+</body>
+</html>
