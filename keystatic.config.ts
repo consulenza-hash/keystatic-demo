@@ -2,7 +2,8 @@ import { config, collection, singleton, fields } from '@keystatic/core';
 
 export default config({
   storage: {
-    kind: 'local',
+    kind: 'github',
+    repo: 'consulenza-hash/keystatic-demo',
   },
 
   collections: {
