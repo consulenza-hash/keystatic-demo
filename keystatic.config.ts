@@ -11,7 +11,7 @@ export default config({
     articoli: collection({
       label: 'Articoli',
       slugField: 'titolo',
-      path: 'src/content/articoli/*',
+      path: 'src/content/articoli/*/',
       format: { contentField: 'contenuto' },
       schema: {
         titolo: fields.slug({ name: { label: 'Titolo' } }),

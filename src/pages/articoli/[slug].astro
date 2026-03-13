@@ -1,6 +1,7 @@
 ---
 import { createReader } from '@keystatic/core/reader';
 import keystaticConfig from '../../../keystatic.config';
+import Markdoc from '@markdoc/markdoc';
 
 export const prerender = true;
 
@@ -13,7 +14,8 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const reader = createReader(process.cwd(), keystaticConfig);
 const articolo = await reader.collections.articoli.read(slug);
-const { default: Contenuto } = await articolo!.contenuto();
+const { node } = await articolo!.contenuto();
+const html = Markdoc.renderers.html(Markdoc.transform(node));
 ---
 <!doctype html>
 <html lang="it">
@@ -45,7 +47,7 @@ const { default: Contenuto } = await articolo!.contenuto();
     <h1>{articolo?.titolo}</h1>
     <p class="data">{articolo?.data}</p>
     <div class="content">
-      <Contenuto />
+      <div set:html={html} />
     </div>
   </div>
   <a href="/keystatic" class="admin-link">⚙ Admin</a>
